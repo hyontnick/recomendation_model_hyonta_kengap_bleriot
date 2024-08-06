@@ -20,7 +20,7 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from surprise import SVD
 
 # Vérification de l'importation des bibliothèques
-st.write("Bibliothèques importées avec succès")
+st.write("Bibliothèques importées avec succès hyonta")
 
 # Charger les fichiers sauvegardés
 try:
