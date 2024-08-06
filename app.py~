@@ -6,37 +6,23 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from surprise import SVD
 
 # Charger les fichiers sauvegardés
-try:
-    with open('best_svd_model.pkl', 'rb') as model_file:
-        best_svd = pickle.load(model_file)
-    st.write("Modèle SVD chargé avec succès")
-except Exception as e:
-    st.write(f"Erreur lors du chargement du modèle SVD: {e}")
+with open('best_svd_model.pkl', 'rb') as model_file:
+    best_svd = pickle.load(model_file)
 
-try:
-    with open('genre_means.pkl', 'rb') as genre_file:
-        genre_means = pickle.load(genre_file)
-    st.write("Genre means chargé avec succès")
-except Exception as e:
-    st.write(f"Erreur lors du chargement des genre means: {e}")
+with open('genre_means.pkl', 'rb') as genre_file:
+    genre_means = pickle.load(genre_file)
 
 # Chargement des fichiers CSV
-try:
-    movies = pd.read_csv('https://raw.githubusercontent.com/hyontnick/recomendation_model_hyonta_kengap_bleriot/main/data/movies.csv').head(60000)
-    ratings = pd.read_csv('https://raw.githubusercontent.com/hyontnick/recomendation_model_hyonta_kengap_bleriot/main/data/ratings.csv').head(60000)
-    st.write("Fichiers CSV chargés avec succès")
-except Exception as e:
-    st.write(f"Erreur lors du chargement des fichiers CSV: {e}")
+movies = pd.read_csv('https://raw.githubusercontent.com/hyontnick/recomendation_model_hyonta_kengap_bleriot/main/data/movies.csv').head(60000)
+ratings = pd.read_csv('https://raw.githubusercontent.com/hyontnick/recomendation_model_hyonta_kengap_bleriot/main/data/ratings.csv').head(60000)
 
-try:
-    data = pd.merge(ratings, movies, on='movieId')
-    le = LabelEncoder()
-    data['genres_encoded'] = le.fit_transform(data['genres'])
-    scaler = MinMaxScaler()
-    data[['userId', 'genres_encoded']] = scaler.fit_transform(data[['userId', 'genres_encoded']])
-    st.write("Données prétraitées avec succès")
-except Exception as e:
-    st.write(f"Erreur lors du prétraitement des données: {e}")
+data = pd.merge(ratings, movies, on='movieId')
+le = LabelEncoder()
+data['genres_encoded'] = le.fit_transform(data['genres'])
+
+# Normaliser les colonnes 'userId' et 'genres_encoded'
+scaler = MinMaxScaler()
+data[['userId', 'genres_encoded']] = scaler.fit_transform(data[['userId', 'genres_encoded']])
 
 # Fonction pour faire une prédiction basée sur le contenu
 def content_based_prediction(user_id, genres_encoded):
@@ -49,7 +35,7 @@ def hybrid_prediction(user_id, genres_encoded):
     hybrid_pred = (svd_pred + content_pred) / 2
     return hybrid_pred
 
-# Interface Streamlit et c'est bien
+# Interface Streamlit
 st.title('Système de Recommandation Hybride')
 
 user_id = st.number_input('Entrez l\'ID de l\'utilisateur:', min_value=1)
@@ -62,4 +48,3 @@ if st.button('Faire une prédiction'):
         st.write(f"La prédiction hybride pour l'utilisateur {user_id} et le film {movie_id} est {prediction:.2f}")
     else:
         st.write(f"Le film avec l'ID {movie_id} n'existe pas dans les données.")
-
