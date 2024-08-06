@@ -1,3 +1,17 @@
+import subprocess
+import sys
+
+# Vérifiez l'installation des packages
+def check_installation(package):
+    try:
+        __import__(package)
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+
+packages = ['pandas', 'numpy', 'scikit-learn', 'streamlit', 'surprise']
+for package in packages:
+    check_installation(package)
+
 import streamlit as st
 import pickle
 import pandas as pd
@@ -5,24 +19,41 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from surprise import SVD
 
-# Charger les fichiers sauvegardés
-with open('best_svd_model.pkl', 'rb') as model_file:
-    best_svd = pickle.load(model_file)
+# Vérification de l'importation des bibliothèques
+st.write("Bibliothèques importées avec succès")
 
-with open('genre_means.pkl', 'rb') as genre_file:
-    genre_means = pickle.load(genre_file)
+# Charger les fichiers sauvegardés
+try:
+    with open('best_svd_model.pkl', 'rb') as model_file:
+        best_svd = pickle.load(model_file)
+    st.write("Modèle SVD chargé avec succès")
+except Exception as e:
+    st.write(f"Erreur lors du chargement du modèle SVD: {e}")
+
+try:
+    with open('genre_means.pkl', 'rb') as genre_file:
+        genre_means = pickle.load(genre_file)
+    st.write("Genre means chargé avec succès")
+except Exception as e:
+    st.write(f"Erreur lors du chargement des genre means: {e}")
 
 # Chargement des fichiers CSV
-movies = pd.read_csv('https://raw.githubusercontent.com/hyontnick/recomendation_model_hyonta_kengap_bleriot/main/data/movies.csv').head(60000)
-ratings = pd.read_csv('https://raw.githubusercontent.com/hyontnick/recomendation_model_hyonta_kengap_bleriot/main/data/ratings.csv').head(60000)
+try:
+    movies = pd.read_csv('https://raw.githubusercontent.com/hyontnick/recomendation_model_hyonta_kengap_bleriot/main/data/movies.csv').head(60000)
+    ratings = pd.read_csv('https://raw.githubusercontent.com/hyontnick/recomendation_model_hyonta_kengap_bleriot/main/data/ratings.csv').head(60000)
+    st.write("Fichiers CSV chargés avec succès")
+except Exception as e:
+    st.write(f"Erreur lors du chargement des fichiers CSV: {e}")
 
-data = pd.merge(ratings, movies, on='movieId')
-le = LabelEncoder()
-data['genres_encoded'] = le.fit_transform(data['genres'])
-
-# Normaliser les colonnes 'userId' et 'genres_encoded'
-scaler = MinMaxScaler()
-data[['userId', 'genres_encoded']] = scaler.fit_transform(data[['userId', 'genres_encoded']])
+try:
+    data = pd.merge(ratings, movies, on='movieId')
+    le = LabelEncoder()
+    data['genres_encoded'] = le.fit_transform(data['genres'])
+    scaler = MinMaxScaler()
+    data[['userId', 'genres_encoded']] = scaler.fit_transform(data[['userId', 'genres_encoded']])
+    st.write("Données prétraitées avec succès")
+except Exception as e:
+    st.write(f"Erreur lors du prétraitement des données: {e}")
 
 # Fonction pour faire une prédiction basée sur le contenu
 def content_based_prediction(user_id, genres_encoded):
@@ -48,3 +79,4 @@ if st.button('Faire une prédiction'):
         st.write(f"La prédiction hybride pour l'utilisateur {user_id} et le film {movie_id} est {prediction:.2f}")
     else:
         st.write(f"Le film avec l'ID {movie_id} n'existe pas dans les données.")
+
