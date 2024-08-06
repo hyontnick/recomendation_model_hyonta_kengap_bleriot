@@ -2,7 +2,7 @@ import streamlit as st
 import pickle
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder, MinMaxScaler
+# from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from surprise import SVD
 
 # Vérification de l'importation des bibliothèques

@@ -1,17 +1,3 @@
-import subprocess
-import sys
-
-# Vérifiez l'installation des packages
-def check_installation(package):
-    try:
-        __import__(package)
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-
-packages = ['pandas', 'numpy', 'scikit-learn', 'streamlit', 'surprise']
-for package in packages:
-    check_installation(package)
-
 import streamlit as st
 import pickle
 import pandas as pd
@@ -20,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from surprise import SVD
 
 # Vérification de l'importation des bibliothèques
-st.write("Bibliothèques importées avec succès hyonta")
+st.write("Bibliothèques importées avec succès")
 
 # Charger les fichiers sauvegardés
 try:
