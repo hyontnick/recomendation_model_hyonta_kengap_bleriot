@@ -1,5 +1,5 @@
-Pandas==1.5.3
-Numpy==1.25.0
-Scikit-learn==1.2.2
-Streamlit==1.36.0
-Surprise==1.1.4
+Pandas
+Numpy
+Scikit-learn
+Streamlit
+Surprise
