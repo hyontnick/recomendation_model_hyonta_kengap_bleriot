@@ -5,6 +5,9 @@ import numpy as np
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from surprise import SVD
 
+# author
+st.write("By HYONTA KENGAP BLERIOT")
+
 # Vérification de l'importation des bibliothèques
 st.write("Bibliothèques importées avec succès")
 
